@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Haven | Premium Anime Figure Showpieces</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        display: ['Cinzel', 'serif'],
+                    },
+                    colors: {
+                        dark: '#0B0C10',
+                        darker: '#050608',
+                        card: '#14161F',
+                        cardBorder: '#232736',
+                        primary: '#FF2A5F',
+                        primaryHover: '#E01B4C',
+                        accent: '#9D4EDD',
+                        gold: '#FFD700',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0B0C10;
+            color: #F3F4F6;
+            overflow-x: hidden;
+        }
+
+        /* Flower Particles Layer */
+        #flower-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .flower-petal {
+            position: absolute;
+            user-select: none;
+            pointer-events: none;
+            animation: fallAnimation linear infinite, swayAnimation ease-in-out infinite alternate;
+            will-change: transform, opacity;
+        }
+
+        @keyframes fallAnimation {
+            0% {
+                transform: translateY(-10vh) rotate(0deg) scale(0.8);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.9;
+            }
+            85% {
+                opacity: 0.9;
+            }
+            100% {
+                transform: translateY(115vh) rotate(720deg) scale(1.1);
+                opacity: 0;
+            }
+        }
+
+        @keyframes swayAnimation {
+            0% { transform: translateX(-30px); }
+            100% { transform: translateX(30px); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050608;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #232736;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FF2A5F;
+        }
+
+        /* Cart Sidebar & Modal Transitions */
+        #cart-sidebar {
+            transform: translateX(100%);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #cart-sidebar.open {
+            transform: translateX(0);
+        }
+
+        .modal-blur {
+            backdrop-filter: blur(8px);
+        }
+
+        /* Card Glow and Hover Effects */
+        .figure-card {
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .figure-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 42, 95, 0.6);
+            box-shadow: 0 15px 35px -10px rgba(255, 42, 95, 0.25);
+        }
+
+        .figure-img-container img {
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .figure-card:hover .figure-img-container img {
+            transform: scale(1.08);
+        }
+
+        /* Toast Animation */
+        .toast-notification {
+            transform: translateY(100px) scale(0.9);
+            opacity: 0;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .toast-notification.show {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        /* Glassmorphism Navigation */
+        .glass-nav {
+            background: rgba(11, 12, 16, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="antialiased font-sans flex flex-col min-h-screen">
+
+    <!-- Navigation Bar -->
+    <nav class="fixed w-full z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Brand Logo -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                    <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-primary to-accent flex items-center justify-center mr-3 shadow-lg shadow-primary/30">
+                        <i class="fa-solid fa-khanda text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="font-display font-bold text-2xl tracking-wider text-white">ANIME<span class="text-primary">HAVEN</span></span>
+                        <span class="block text-[10px] tracking-widest text-gray-400 uppercase -mt-1">Collector's Shrine</span>
+                    </div>
+                </div>
+
+                <!-- Search Bar (Desktop) -->
+                <div class="hidden md:flex flex-1 max-w-md mx-8 relative">
+                    <input type="text" id="search-input" onkeyup="handleSearch()" placeholder="Search figures, anime series..." class="w-full bg-card border border-cardBorder text-sm rounded-full py-2.5 pl-11 pr-4 text-white focus:outline-none focus:border-primary transition shadow-inner placeholder-gray-500">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="flex items-center space-x-5">
+                    <button onclick="toggleFlowerControls()" title="Toggle Flower Petals" class="p-2.5 rounded-full bg-card border border-cardBorder text-gray-300 hover:text-primary hover:border-primary/50 transition">
+                        <i class="fa-solid fa-spa text-lg"></i>
+                    </button>
+
+                    <!-- Cart Trigger Button -->
+                    <button id="cart-btn" class="relative p-2.5 rounded-full bg-card border border-cardBorder text-gray-200 hover:text-white hover:border-primary/50 transition group">
+                        <i class="fa-solid fa-basket-shopping text-xl group-hover:scale-110 transition-transform"></i>
+                        <span id="cart-count" class="absolute -top-1 -right-1 bg-primary text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg shadow-primary/50">
+                            0
+                        </span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Search Bar -->
+            <div class="pb-3 md:hidden">
+                <div class="relative">
+                    <input type="text" id="mobile-search-input" onkeyup="handleMobileSearch()" placeholder="Search figures..." class="w-full bg-card border border-cardBorder text-sm rounded-full py-2 pl-10 pr-4 text-white focus:outline-none focus:border-primary">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="relative w-full min-h-screen flex items-center justify-center bg-darker overflow-hidden pt-20">
+        <!-- Background Glows -->
+        <div class="absolute -top-40 -left-40 w-96 h-96 bg-primary/20 rounded-full blur-[120px] pointer-events-none"></div>
+        <div class="absolute bottom-10 -right-40 w-96 h-96 bg-accent/20 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <!-- Flower Petal Animation Layer -->
+        <div id="flower-container"></div>
+
+        <!-- Hero Content -->
+        <div class="relative z-20 text-center px-4 max-w-4xl mx-auto py-16">
+            <div class="inline-flex items-center space-x-2 bg-card/80 border border-cardBorder px-4 py-2 rounded-full mb-6 backdrop-blur-sm shadow-xl">
+                <span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+                <span class="text-xs font-semibold uppercase tracking-widest text-gray-300">🌸 Floral Spring Showcase 2026</span>
+            </div>
+
+            <h1 class="font-display text-4xl sm:text-6xl lg:text-7xl font-extrabold text-white mb-6 tracking-tight leading-tight">
+                Authentic Masterpiece <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-400 to-accent">Anime Figures</span>
+            </h1>
+
+            <p class="text-base sm:text-xl text-gray-300 mb-10 max-w-2xl mx-auto font-light leading-relaxed">
+                Step into a sanctuary of museum-grade collectibles. Hand-crafted 1/7 and 1/8 scale showpieces featuring stunning dynamic poses and official licensing.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#shop" class="w-full sm:w-auto bg-gradient-to-r from-primary to-primaryHover text-white font-bold py-4 px-10 rounded-full shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center space-x-2">
+                    <span>Explore 15 Figures</span>
+                    <i class="fa-solid fa-arrow-down-long text-sm"></i>
+                </a>
+                <button onclick="document.getElementById('flower-selector-modal').classList.remove('hidden')" class="w-full sm:w-auto bg-card hover:bg-cardBorder text-gray-200 border border-cardBorder font-semibold py-4 px-8 rounded-full transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-sliders text-primary"></i>
+                    <span>Flower Types</span>
+                </button>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="grid grid-cols-3 gap-4 max-w-lg mx-auto mt-16 pt-8 border-t border-gray-800/80">
+                <div>
+                    <span class="block text-2xl font-bold text-white font-display">100%</span>
+                    <span class="text-xs text-gray-400">Licensed Products</span>
+                </div>
+                <div>
+                    <span class="block text-2xl font-bold text-white font-display">15+</span>
+                    <span class="text-xs text-gray-400">Featured Figures</span>
+                </div>
+                <div>
+                    <span class="block text-2xl font-bold text-white font-display">4.9 ★</span>
+                    <span class="text-xs text-gray-400">Collector Rating</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <a href="#shop" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-gray-400 hover:text-white transition animate-bounce z-20">
+            <i class="fa-solid fa-chevron-down text-2xl"></i>
+        </a>
+    </div>
+
+    <!-- Main Shop Section -->
+    <main id="shop" class="flex-grow bg-dark py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Section Header -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+                <div>
+                    <span class="text-primary font-semibold text-xs uppercase tracking-widest">Collector's Choice</span>
+                    <h2 class="font-display text-3xl md:text-4xl font-bold text-white mt-1">Featured Showpieces</h2>
+                </div>
+
+                <!-- Category Filters -->
+                <div id="category-filters" class="flex flex-wrap gap-2">
+                    <button onclick="filterCategory('All')" class="category-btn active px-4 py-2 rounded-full text-xs font-semibold bg-primary text-white border border-primary transition">All Figures</button>
+                    <button onclick="filterCategory('One Piece')" class="category-btn px-4 py-2 rounded-full text-xs font-semibold bg-card text-gray-300 border border-cardBorder hover:border-primary transition">One Piece</button>
+                    <button onclick="filterCategory('Jujutsu Kaisen')" class="category-btn px-4 py-2 rounded-full text-xs font-semibold bg-card text-gray-300 border border-cardBorder hover:border-primary transition">Jujutsu Kaisen</button>
+                    <button onclick="filterCategory('Demon Slayer')" class="category-btn px-4 py-2 rounded-full text-xs font-semibold bg-card text-gray-300 border border-cardBorder hover:border-primary transition">Demon Slayer</button>
+                    <button onclick="filterCategory('Attack on Titan')" class="category-btn px-4 py-2 rounded-full text-xs font-semibold bg-card text-gray-300 border border-cardBorder hover:border-primary transition">Attack on Titan</button>
+                    <button onclick="filterCategory('Naruto')" class="category-btn px-4 py-2 rounded-full text-xs font-semibold bg-card text-gray-300 border border-cardBorder hover:border-primary transition">Naruto</button>
+                </div>
+            </div>
+
+            <!-- Sorting Bar -->
+            <div class="flex items-center justify-between bg-card border border-cardBorder rounded-2xl p-4 mb-8 text-xs text-gray-400">
+                <span id="product-count-label">Showing 15 Figure Showpieces</span>
+                
+                <div class="flex items-center space-x-2">
+                    <label for="sort-select" class="hidden sm:inline">Sort By:</label>
+                    <select id="sort-select" onchange="sortProducts()" class="bg-darker border border-cardBorder text-white rounded-lg px-3 py-1.5 focus:outline-none focus:border-primary">
+                        <option value="featured">Featured First</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="rating">Highest Rated</option>
+                        <option value="discount">Biggest Savings</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7">
+                <!-- Javascript will inject 15 figure cards here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Cart Overlay -->
+    <div id="cart-overlay" onclick="toggleCart()" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full sm:w-[420px] bg-card border-l border-cardBorder z-50 flex flex-col shadow-2xl">
+        <!-- Header -->
+        <div class="p-6 border-b border-cardBorder bg-darker flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-lg bg-primary/20 text-primary flex items-center justify-center">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                </div>
+                <h3 class="text-xl font-bold font-display text-white">Your Showcase Cart</h3>
+            </div>
+            <button onclick="toggleCart()" class="text-gray-400 hover:text-white text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-cardBorder transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Free Shipping Progress Bar -->
+        <div class="px-6 py-3 bg-darker/50 border-b border-cardBorder text-xs">
+            <div class="flex justify-between mb-1">
+                <span id="shipping-msg" class="text-gray-300">Add $150.00 for Free Express Shipping</span>
+                <span id="shipping-percent" class="text-primary font-bold">0%</span>
+            </div>
+            <div class="w-full h-1.5 bg-cardBorder rounded-full overflow-hidden">
+                <div id="shipping-bar" class="h-full bg-gradient-to-r from-primary to-accent w-0 transition-all duration-500"></div>
+            </div>
+        </div>
+
+        <!-- Cart Items Container -->
+        <div id="cart-items" class="flex-grow overflow-y-auto p-6 space-y-4">
+            <!-- Items injected by JS -->
+        </div>
+
+        <!-- Footer -->
+        <div class="p-6 border-t border-cardBorder bg-darker space-y-4">
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between text-gray-400">
+                    <span>Subtotal</span>
+                    <span id="cart-subtotal" class="text-white font-semibold">$0.00</span>
+                </div>
+                <div class="flex justify-between text-gray-400">
+                    <span>Discount Savings</span>
+                    <span id="cart-savings" class="text-green-400 font-semibold">-$0.00</span>
+                </div>
+                <div class="flex justify-between text-gray-400">
+                    <span>Estimated Shipping</span>
+                    <span id="cart-shipping-cost" class="text-white font-semibold">Calculated at Checkout</span>
+                </div>
+                <div class="border-t border-cardBorder pt-2 flex justify-between text-base font-bold text-white">
+                    <span>Total</span>
+                    <span id="cart-final-total" class="text-primary text-xl font-display">$0.00</span>
+                </div>
+            </div>
+
+            <button onclick="openCheckoutModal()" class="w-full bg-gradient-to-r from-primary to-primaryHover text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 hover:shadow-primary/50 transition flex items-center justify-center space-x-2">
+                <span>Proceed to Checkout</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div id="product-modal" class="fixed inset-0 bg-black/80 modal-blur z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-card border border-cardBorder rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl relative animate-fade-in max-h-[90vh] flex flex-col md:flex-row">
+            <button onclick="closeProductModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white bg-darker/80 w-9 h-9 rounded-full flex items-center justify-center z-10 border border-cardBorder transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Modal Image -->
+            <div class="md:w-1/2 bg-darker relative flex items-center justify-center p-6 min-h-[280px]">
+                <img id="modal-img" src="" alt="" class="max-h-[340px] w-auto object-contain drop-shadow-2xl">
+                <span id="modal-discount-badge" class="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg"></span>
+            </div>
+
+            <!-- Modal Info -->
+            <div class="md:w-1/2 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto">
+                <div>
+                    <span id="modal-series" class="text-xs font-bold text-primary tracking-widest uppercase block mb-1"></span>
+                    <h3 id="modal-title" class="font-display text-2xl font-bold text-white mb-3"></h3>
+                    
+                    <!-- Stars -->
+                    <div class="flex items-center mb-4 space-x-2">
+                        <div id="modal-stars" class="flex text-yellow-400 text-sm"></div>
+                        <span id="modal-reviews-count" class="text-xs text-gray-400"></span>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="flex items-baseline space-x-3 mb-6">
+                        <span id="modal-price" class="text-3xl font-extrabold text-white font-display"></span>
+                        <span id="modal-old-price" class="text-sm text-gray-500 line-through"></span>
+                    </div>
+
+                    <!-- Figure Specs -->
+                    <div class="bg-darker border border-cardBorder rounded-xl p-4 text-xs space-y-2 mb-6">
+                        <div class="flex justify-between"><span class="text-gray-400">Scale / Height:</span><span id="modal-scale" class="text-white font-medium"></span></div>
+                        <div class="flex justify-between"><span class="text-gray-400">Material:</span><span class="text-white font-medium">Pre-painted PVC & ABS</span></div>
+                        <div class="flex justify-between"><span class="text-gray-400">Authenticity:</span><span class="text-green-400 font-medium"><i class="fa-solid fa-certificate text-[10px] mr-1"></i> 100% Official Licensed</span></div>
+                    </div>
+
+                    <p id="modal-desc" class="text-xs text-gray-300 leading-relaxed mb-6"></p>
+                </div>
+
+                <div class="space-y-3">
+                    <button id="modal-add-btn" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-cart-plus"></i>
+                        <span>Add To Cart</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flower Type Selector Modal -->
+    <div id="flower-selector-modal" class="fixed inset-0 bg-black/80 modal-blur z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-card border border-cardBorder rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-display text-xl font-bold text-white flex items-center">
+                    <i class="fa-solid fa-seedling text-primary mr-2"></i> Flower Animation
+                </h3>
+                <button onclick="document.getElementById('flower-selector-modal').classList.add('hidden')" class="text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-gray-300 mb-4">Choose which types of falling flowers stream across your shrine:</p>
+
+            <div class="space-y-3 mb-6">
+                <label class="flex items-center justify-between p-3 bg-darker border border-cardBorder rounded-xl cursor-pointer hover:border-primary">
+                    <span class="flex items-center text-sm font-medium text-white"><span class="text-lg mr-2">🌸</span> Pink Sakura Petals</span>
+                    <input type="checkbox" id="flower-sakura" checked class="accent-primary w-4 h-4">
+                </label>
+                <label class="flex items-center justify-between p-3 bg-darker border border-cardBorder rounded-xl cursor-pointer hover:border-primary">
+                    <span class="flex items-center text-sm font-medium text-white"><span class="text-lg mr-2">🪷</span> Sacred Lotus Blossoms</span>
+                    <input type="checkbox" id="flower-lotus" checked class="accent-primary w-4 h-4">
+                </label>
+                <label class="flex items-center justify-between p-3 bg-darker border border-cardBorder rounded-xl cursor-pointer hover:border-primary">
+                    <span class="flex items-center text-sm font-medium text-white"><span class="text-lg mr-2">🌹</span> Crimson Rose Petals</span>
+                    <input type="checkbox" id="flower-rose" checked class="accent-primary w-4 h-4">
+                </label>
+                <label class="flex items-center justify-between p-3 bg-darker border border-cardBorder rounded-xl cursor-pointer hover:border-primary">
+                    <span class="flex items-center text-sm font-medium text-white"><span class="text-lg mr-2">🌺</span> Red Hibiscus</span>
+                    <input type="checkbox" id="flower-hibiscus" checked class="accent-primary w-4 h-4">
+                </label>
+                <label class="flex items-center justify-between p-3 bg-darker border border-cardBorder rounded-xl cursor-pointer hover:border-primary">
+                    <span class="flex items-center text-sm font-medium text-white"><span class="text-lg mr-2">💮</span> White Cherry Blossom</span>
+                    <input type="checkbox" id="flower-blossom" checked class="accent-primary w-4 h-4">
+                </label>
+            </div>
+
+            <button onclick="applyFlowerSettings()" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-3 rounded-xl transition">
+                Update Petal Effects
+            </button>
+        </div>
+    </div>
+
+    <!-- Checkout Success Modal -->
+    <div id="checkout-modal" class="fixed inset-0 bg-black/85 modal-blur z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-card border border-cardBorder rounded-3xl max-w-md w-full p-8 text-center shadow-2xl">
+            <div class="w-16 h-16 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 class="font-display text-2xl font-bold text-white mb-2">Order Confirmed!</h3>
+            <p class="text-xs text-gray-300 mb-6">Thank you for collecting with Anime Haven! Your figure showpieces are being carefully packaged with anime-grade protective wrap.</p>
+            
+            <div class="bg-darker border border-cardBorder rounded-2xl p-4 text-left text-xs mb-6 space-y-2">
+                <div class="flex justify-between"><span class="text-gray-400">Order ID:</span><span class="text-white font-mono">#AH-2026-9814</span></div>
+                <div class="flex justify-between"><span class="text-gray-400">Total Paid:</span><span id="checkout-total-paid" class="text-primary font-bold"></span></div>
+                <div class="flex justify-between"><span class="text-gray-400">Estimated Delivery:</span><span class="text-gray-200">3-5 Business Days</span></div>
+            </div>
+
+            <button onclick="closeCheckoutModal()" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-3.5 rounded-xl transition">
+                Continue Shopping
+            </button>
+        </div>
+    </div>
+
+    <!-- Floating Toast Notification -->
+    <div id="toast" class="toast-notification fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-card/90 backdrop-blur-md text-white px-6 py-3.5 rounded-full shadow-2xl flex items-center space-x-3 border border-cardBorder pointer-events-none">
+        <i class="fa-solid fa-circle-check text-green-400 text-lg"></i>
+        <span id="toast-msg" class="text-xs font-semibold">Item added to cart!</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-darker border-t border-cardBorder pt-16 pb-12 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+                <!-- Col 1 -->
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-white font-bold">
+                            <i class="fa-solid fa-khanda"></i>
+                        </div>
+                        <span class="font-display font-bold text-xl text-white">ANIME<span class="text-primary">HAVEN</span></span>
+                    </div>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        The ultimate destination for premium 1/7 and 1/8 scale anime showpiece figures. Guaranteed 100% official licensed products directly from Japan.
+                    </p>
+                </div>
+
+                <!-- Col 2 -->
+                <div>
+                    <h4 class="font-display text-sm font-bold text-white uppercase tracking-wider mb-4">Popular Anime</h4>
+                    <ul class="space-y-2 text-xs text-gray-400">
+                        <li><a href="#shop" onclick="filterCategory('One Piece')" class="hover:text-primary transition">One Piece Figures</a></li>
+                        <li><a href="#shop" onclick="filterCategory('Jujutsu Kaisen')" class="hover:text-primary transition">Jujutsu Kaisen Figures</a></li>
+                        <li><a href="#shop" onclick="filterCategory('Demon Slayer')" class="hover:text-primary transition">Demon Slayer Statues</a></li>
+                        <li><a href="#shop" onclick="filterCategory('Attack on Titan')" class="hover:text-primary transition">Attack on Titan Collectibles</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3 -->
+                <div>
+                    <h4 class="font-display text-sm font-bold text-white uppercase tracking-wider mb-4">Customer Care</h4>
+                    <ul class="space-y-2 text-xs text-gray-400">
+                        <li><a href="#" class="hover:text-primary transition">Authenticity Guarantee</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Safe Packaging & Shipping</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Return Policy (30 Days)</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Collector Care Guide</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4 -->
+                <div>
+                    <h4 class="font-display text-sm font-bold text-white uppercase tracking-wider mb-4">Collector Newsletter</h4>
+                    <p class="text-xs text-gray-400 mb-3">Get notified on limited scale figure pre-orders.</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email..." class="bg-card border border-cardBorder text-xs rounded-l-lg py-2.5 px-3 text-white focus:outline-none focus:border-primary w-full">
+                        <button class="bg-primary hover:bg-primaryHover text-white text-xs px-4 rounded-r-lg font-bold transition">
+                            Join
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-8 border-t border-cardBorder flex flex-col sm:flex-row justify-between items-center text-xs text-gray-500 gap-4">
+                <p>&copy; 2026 Anime Haven Store. All figure photos, character rights belong to respective licensors.</p>
+                <div class="flex space-x-5 text-base text-gray-400">
+                    <a href="#" class="hover:text-primary transition"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="hover:text-primary transition"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" class="hover:text-primary transition"><i class="fa-brands fa-discord"></i></a>
+                    <a href="#" class="hover:text-primary transition"><i class="fa-brands fa-tiktok"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Exactly 15 Anime Figure Showpiece Products with high quality photos and fallbacks
+        const products = [
+            {
+                id: 1,
+                name: "Satoru Gojo: Hollow Purple Unleashed",
+                series: "Jujutsu Kaisen",
+                scale: "1/7 Scale (30cm)",
+                price: 145.00,
+                oldPrice: 195.00,
+                rating: 5.0,
+                reviews: 512,
+                image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop",
+                fallbackImage: "https://placehold.co/500x600/14161F/FF2A5F?text=Gojo+Hollow+Purple",
+                description: "Masterwork 1/7 scale figure capturing Satoru Gojo channeling Hollow Purple with translucent purple aura energy effects and custom illuminated acrylic display base."
+            },
+            {
+                id: 2,
+                name: "Roronoa Zoro: Three-Dragon Style Asura",
+                series: "One Piece",
+                scale: "DX Statue (28cm)",
+                price: 189.99,
+                oldPrice: 240.00,
+                rating: 4.9,
+                reviews: 671,
+                image: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&auto=format&fit=crop",
+                fallbackImage: "https://placehold.co/500x600/14161F/FF2A5F?text=Zoro+Asura+Figure",
+                description: "Dynamic showcase figure featuring Zoro executing Nine-Sword Style Asura. Crafted with intricate metallic sheen on Wado Ichimonji, Enma, and Sandai Kitetsu."
+            },
+            {
+                id: 3,
+                name: "Naruto Uzumaki: Nine-Tails Sage Mode",
+                series: "Naruto",
+                scale: "Masterpiece (25cm)",
+                price: 129.99,
+                oldPrice: 169.99,
+                rating: 4.8,
+                reviews: 342,
+                image: "https://images.unsplash.com/photo-1563089145-599997674d42?w=600&auto=format&fit=crop",
+                fallbackImage: "https://placehold.co/500x600/14161F/FF2A5F?text=Naruto+Sage+Mode",
+                description: "Featuring Sage Mode pigment markings and Kurama chakra cloak aura swirls. Includes interchangeable Rasengan energy orb hand piece."
+            },
+            {
+                id: 4,
+                name: "Tanjiro Kamado: Hinokami Kagura Dance",
+                series: "Demon Slayer",
+                scale: "1/8 Scale (22cm)",
+                price: 95.00,
+                oldPrice: 125.00,
+                rating: 4.7,
+                reviews: 289,
+                image: "https://images.unsplash.com/photo-1618336753974-aae8e04506aa?w=600&auto=format&fit=crop",
+                fallbackImage: "https://placehold.co/500x600/14161F/FF2A5F?text=Tanjiro+Hinokami",
+                description: "Breathtaking Sun Breathing dragon flame effect base. Meticulously painted haori pattern with movement folds."
+            },
+            {
+                id: 5,
+                name: "Levi Ackerman: Beast Titan Slayer ODM",
+                series: "Attack on Titan",
+                scale: "1/8 Scale (26cm)",
+                price: 110.50,
+                oldPrice: 145.00,
+                rating: 5.0,
+                reviews: 418,
+                image: "https://images.unsplash.com/photo-1608889175123-8ee362201f81?w=600&auto=format&fit=crop",
+                fallbackImage: "https://placehold.co/500x600/14161F/FF2A5F?text=Levi+ODM+Gear",
+                description: "Captain Levi suspended mid-air above tree trunk display base, dual ultrahard steel blades angled for swift nape slice."
+            },
+            {
+                id: 6,
+                name: "Monkey D. Luffy: Gear 5 Sun God Nika",
+                series: "One Piece",
+                scale: "Supreme Statue (32cm)",
+                price: 210.00,
+                oldPrice: 275.00,
+                rating: 5.0,
+                reviews: 890,
+                image: "https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?w=600&auto=format&fit=crop",
+                fallbackImage: "https://placehold.co/500x600/14161F/FF2A5F?text=Luffy+Gear+5",
+                description: "Peak form Gear 5 Luffy in laughing pose with cloud-like white hair molding and lightning strike accent pillar base."
+            },
+            {
+                id: 7,
+                name: "Megumi Fushiguro: Divine Dog Shadow",
+                series: "Jujutsu Kaisen",
+                scale: "1/7 Scale (23cm)",
+                price: 118.00,
+                oldPrice: 150.00,
+                rating: 4.8,
+                reviews: 195,
+                image: "https://images.unsplash.com/photo-1560932684-5e552e2894e9?w=600&auto=format&fit=crop",
+                fallbackImage: "https://placehold.co/500x600/14161F/FF2A5F?text=Megumi+Shadow",
+                description: "Megumi forming hand shadow puppet signs with black and white Divine Dogs emerging from dark puddle resin display."
+            },
+            {
+                id: 8,
+                name: "Nezuko Kamado: Demon Form Awakening",
+                series: "Demon Slayer",
+                scale: "1/8 Scale (21cm)",
+                price: 105.00,
+                oldPrice: 135.00,
+                rating: 4.9,
+                reviews: 310,
+                image: "https://images.unsplash.com/photo-1601850494422-3cf14624b0b3?w=600&auto=format&fit=crop",
+                fallbackImage: "https://placehold.co/500x600/14161F/FF2A5F?text=Nezuko+Awakened",
+                description: "Awakened Nezuko with vine body markings, demon horn detail, and pink blood demon art flame base."
+            },
+            {
+                id: 9,
+                name: "Guts: Berserker Armor Blood Rage",
+                series: "Berserk",
+                scale: "Ultimate Statue (35cm)",
+                price: 249.99,
+                oldPrice: 320.00,
+                rating: 5.0,
+                reviews: 950,
+                image: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&auto=format&fit=crop",
+                fallbackImage: "https://placehold.co/500x600/14161F/FF2A5F?text=Guts+Berserker",
+                description: "Heavyweight collector statue depicting Guts in black Berserker armor resting Dragon Slayer sword on a mound of slain apostles."
+            },
+            {
+                id: 10,
+                name: "Edward Elric: Transmutation Array Alpha",
+                series: "Fullmetal Alchemist",
+                scale: "1/7 Scale (24cm)",
+                price: 135.00,
+                oldPrice: 170.00,
+                rating: 4.9,
+                reviews: 210,
+                image: "https://images.unsplash.com/photo-1580477667995-2b94f01c9516?w=600&auto=format&fit=crop",
+                fallbackImage: "https://placehold.co/500x600/14161F/FF2A5F?text=Edward+Elric",
+                description: "Clapped hands pose ready to transmute. Features metallic automail arm paint and glowing alchemy circle LED base."
+            },
+            {
+                id: 11,
+                name: "Mikasa Ackerman: Final Season Scout",
+                series: "Attack on Titan",
+                scale: "1/8 Scale (25cm)",
+                price: 108.00,
+                oldPrice: 140.00,
+                rating: 4.8,
+                reviews: 198,
+                image: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=600&auto=format&fit=crop",
+                fallbackImage: "https://placehold.co/500x600/14161F/FF2A5F?text=Mikasa+Ackerman",
+                description: "Final Season black uniform Mikasa with Thunder Spears prepared. Detailed red scarf flow styling."
+            },
+            {
+                id: 12,
+                name: "Killua Zoldyck: Godspeed Mode",
+                series: "Hunter x Hunter",
+                scale: "1/8 Scale (22cm)",
+                price: 120.00,
+                oldPrice: 155.00,
+                rating: 5.0,
+                reviews: 315,
+                image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop",
+                fallbackImage: "https://placehold.co/500x600/14161F/FF2A5F?text=Killua+Godspeed",
+                description: "Electric blue lightning aura wraps around Killua's spiky hair and hands in full Godspeed lightning sprint."
+            },
+            {
+                id: 13,
+                name: "Izuku Midoriya: One For All 100%",
+                series: "My Hero Academia",
+                scale: "1/7 Scale (27cm)",
+                price: 115.99,
+                oldPrice: 150.00,
+                rating: 4.7,
+                reviews: 245,
+                image: "https://images.unsplash.com/photo-1531512073830-ba890ca4eba2?w=600&auto=format&fit=crop",
+                fallbackImage: "https://placehold.co/500x600/14161F/FF2A5F?text=Deku+100%25",
+                description: "Deku surrounded by energy sparks and Eri on his back. High impact floating action pose."
+            },
+            {
+                id: 14,
+                name: "Ken Kaneki: Awakened Centipede Kagune",
+                series: "Tokyo Ghoul",
+                scale: "1/7 Scale (28cm)",
+                price: 155.99,
+                oldPrice: 200.00,
+                rating: 4.9,
+                reviews: 405,
+                image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop",
+                fallbackImage: "https://placehold.co/500x600/14161F/FF2A5F?text=Kaneki+Tokyo+Ghoul",
+                description: "Ghoul mask Kaneki with red translucent centipede kagune appendages twisting around bloodied urban rubble base."
+            },
+            {
+                id: 15,
+                name: "Asuka Langley: Unit-02 Plugsuit",
+                series: "Evangelion",
+                scale: "1/7 Scale (29cm)",
+                price: 140.00,
+                oldPrice: 180.00,
+                rating: 5.0,
+                reviews: 420,
+                image: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&auto=format&fit=crop",
+                fallbackImage: "https://placehold.co/500x600/14161F/FF2A5F?text=Asuka+Plugsuit",
+                description: "Asuka in glossy deep red plugsuit leaning against Evangelion Unit-02 shoulder statue base."
+            }
+        ];
+
+        let cart = [];
+        let currentFilter = 'All';
+        let searchQuery = '';
+
+        // Multi-flower Animation System
+        const flowerTypes = {
+            sakura: '🌸',
+            lotus: '🪷',
+            rose: '🌹',
+            hibiscus: '🌺',
+            blossom: '💮'
+        };
+
+        let activeFlowerIcons = ['🌸', '🪷', '🌹', '🌺', '💮'];
+        let animationActive = true;
+
+        function initFlowerAnimation() {
+            const container = document.getElementById('flower-container');
+            container.innerHTML = '';
+            
+            if (!animationActive || activeFlowerIcons.length === 0) return;
+
+            const numberOfPetals = window.innerWidth < 640 ? 25 : 45;
+
+            for (let i = 0; i < numberOfPetals; i++) {
+                createPetal(container);
+            }
+        }
+
+        function createPetal(container) {
+            const petal = document.createElement('div');
+            petal.className = 'flower-petal';
+            
+            // Random flower selection from active list
+            const icon = activeFlowerIcons[Math.floor(Math.random() * activeFlowerIcons.length)];
+            petal.innerHTML = icon;
+
+            // Random positioning and timings
+            const leftPos = Math.random() * 100; // 0 to 100vw
+            const duration = Math.random() * 6 + 6; // 6s to 12s
+            const delay = Math.random() * 5;
+            const size = Math.random() * 1.4 + 0.9; // 0.9rem to 2.3rem
+
+            petal.style.left = `${leftPos}vw`;
+            petal.style.animationDuration = `${duration}s, ${duration / 2.5}s`;
+            petal.style.animationDelay = `${delay}s, ${delay}s`;
+            petal.style.fontSize = `${size}rem`;
+
+            if (size < 1.3) {
+                petal.style.filter = "blur(1px)";
+                petal.style.opacity = "0.7";
+            }
+
+            container.appendChild(petal);
+
+            setTimeout(() => {
+                if (petal.parentNode) {
+                    petal.remove();
+                    if (animationActive) createPetal(container);
+                }
+            }, (duration + delay) * 1000);
+        }
+
+        function toggleFlowerControls() {
+            document.getElementById('flower-selector-modal').classList.remove('hidden');
+        }
+
+        function applyFlowerSettings() {
+            activeFlowerIcons = [];
+            if (document.getElementById('flower-sakura').checked) activeFlowerIcons.push('🌸');
+            if (document.getElementById('flower-lotus').checked) activeFlowerIcons.push('🪷');
+            if (document.getElementById('flower-rose').checked) activeFlowerIcons.push('🌹');
+            if (document.getElementById('flower-hibiscus').checked) activeFlowerIcons.push('🌺');
+            if (document.getElementById('flower-blossom').checked) activeFlowerIcons.push('💮');
+
+            document.getElementById('flower-selector-modal').classList.add('hidden');
+            initFlowerAnimation();
+            showToast("Flower petal style updated!");
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+
+            // Filter logic
+            let filtered = products.filter(p => {
+                const matchesCategory = currentFilter === 'All' || p.series.toLowerCase().includes(currentFilter.toLowerCase());
+                const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                      p.series.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+
+            // Update counter
+            document.getElementById('product-count-label').innerText = `Showing ${filtered.length} of 15 Figure Showpieces`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-16 text-center text-gray-400">
+                        <i class="fa-solid fa-ghost text-5xl mb-4 text-gray-600"></i>
+                        <p class="text-lg font-bold">No figure showpieces found.</p>
+                        <p class="text-xs text-gray-500 mt-1">Try searching for a different anime or clearing your filter.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(product => {
+                // Calculate discount percentage
+                const discountPercent = Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100);
+
+                // Stars HTML
+                let starsHtml = '';
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= Math.floor(product.rating)) {
+                        starsHtml += '<i class="fa-solid fa-star text-yellow-400"></i>';
+                    } else if (i === Math.ceil(product.rating) && !Number.isInteger(product.rating)) {
+                        starsHtml += '<i class="fa-solid fa-star-half-stroke text-yellow-400"></i>';
+                    } else {
+                        starsHtml += '<i class="fa-regular fa-star text-yellow-400"></i>';
+                    }
+                }
+
+                const cardHTML = `
+                    <div class="figure-card bg-card rounded-2xl overflow-hidden border border-cardBorder flex flex-col h-full group">
+                        <!-- Figure Photo Wrapper -->
+                        <div class="relative figure-img-container bg-darker h-[310px] flex items-center justify-center p-4 overflow-hidden cursor-pointer" onclick="openProductModal(${product.id})">
+                            <!-- Discount Badge -->
+                            <div class="absolute top-3 left-3 bg-gradient-to-r from-primary to-primaryHover text-white text-[11px] font-extrabold px-3 py-1 rounded-full shadow-lg z-10">
+                                -${discountPercent}% OFF
+                            </div>
+                            
+                            <!-- Scale Tag -->
+                            <div class="absolute top-3 right-3 bg-card/90 border border-cardBorder text-gray-300 text-[10px] font-semibold px-2.5 py-0.5 rounded-md z-10">
+                                ${product.scale}
+                            </div>
+
+                            <!-- Main Figure Image with onError Fallback -->
+                            <img src="${product.image}" 
+                                 alt="${product.name}" 
+                                 onerror="this.onerror=null; this.src='${product.fallbackImage}';" 
+                                 class="max-h-full w-auto object-contain drop-shadow-xl" 
+                                 loading="lazy">
+
+                            <!-- Quick View Overlay -->
+                            <div class="absolute inset-0 bg-darker/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <span class="bg-white text-dark font-bold text-xs px-4 py-2 rounded-full shadow-xl transform translate-y-2 group-hover:translate-y-0 transition-transform">
+                                    <i class="fa-regular fa-eye mr-1"></i> Quick View
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Info Content -->
+                        <div class="p-5 flex flex-col flex-grow justify-between">
+                            <div>
+                                <span class="text-primary text-[10px] font-extrabold uppercase tracking-widest block mb-1">${product.series}</span>
+                                <h3 onclick="openProductModal(${product.id})" class="text-base font-bold text-white mb-2 leading-snug cursor-pointer hover:text-primary transition line-clamp-2">
+                                    ${product.name}
+                                </h3>
+
+                                <!-- Reviews -->
+                                <div class="flex items-center space-x-2 mb-3">
+                                    <div class="flex text-xs space-x-0.5">${starsHtml}</div>
+                                    <span class="text-gray-400 text-xs">(${product.reviews})</span>
+                                </div>
+                            </div>
+
+                            <!-- Pricing and Cart Button -->
+                            <div class="pt-3 border-t border-cardBorder/60 flex items-center justify-between mt-auto">
+                                <div>
+                                    <span class="text-gray-500 line-through text-xs block">$${product.oldPrice.toFixed(2)}</span>
+                                    <span class="text-xl font-extrabold text-white font-display">$${product.price.toFixed(2)}</span>
+                                </div>
+                                <button onclick="addToCart(${product.id})" class="bg-cardBorder hover:bg-primary text-white w-10 h-10 rounded-xl flex items-center justify-center transition-colors shadow-md hover:shadow-primary/40">
+                                    <i class="fa-solid fa-cart-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += cardHTML;
+            });
+        }
+
+        function filterCategory(category) {
+            currentFilter = category;
+            
+            // Update active state on buttons
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                if (btn.innerText.includes(category) || (category === 'All' && btn.innerText.includes('All'))) {
+                    btn.className = 'category-btn active px-4 py-2 rounded-full text-xs font-semibold bg-primary text-white border border-primary transition';
+                } else {
+                    btn.className = 'category-btn px-4 py-2 rounded-full text-xs font-semibold bg-card text-gray-300 border border-cardBorder hover:border-primary transition';
+                }
+            });
+
+            renderProducts();
+        }
+
+        function sortProducts() {
+            const val = document.getElementById('sort-select').value;
+            if (val === 'price-low') {
+                products.sort((a, b) => a.price - b.price);
+            } else if (val === 'price-high') {
+                products.sort((a, b) => b.price - a.price);
+            } else if (val === 'rating') {
+                products.sort((a, b) => b.rating - a.rating);
+            } else if (val === 'discount') {
+                products.sort((a, b) => ((b.oldPrice - b.price)/b.oldPrice) - ((a.oldPrice - a.price)/a.oldPrice));
+            } else {
+                products.sort((a, b) => a.id - b.id);
+            }
+            renderProducts();
+        }
+
+        function handleSearch() {
+            searchQuery = document.getElementById('search-input').value;
+            renderProducts();
+        }
+
+        function handleMobileSearch() {
+            searchQuery = document.getElementById('mobile-search-input').value;
+            renderProducts();
+        }
+
+        function openProductModal(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+
+            const discountPercent = Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100);
+
+            document.getElementById('modal-img').src = product.image;
+            document.getElementById('modal-img').onerror = function() { this.src = product.fallbackImage; };
+            document.getElementById('modal-series').innerText = product.series;
+            document.getElementById('modal-title').innerText = product.name;
+            document.getElementById('modal-discount-badge').innerText = `-${discountPercent}% SAVINGS`;
+            document.getElementById('modal-price').innerText = `$${product.price.toFixed(2)}`;
+            document.getElementById('modal-old-price').innerText = `$${product.oldPrice.toFixed(2)}`;
+            document.getElementById('modal-scale').innerText = product.scale;
+            document.getElementById('modal-desc').innerText = product.description;
+            document.getElementById('modal-reviews-count').innerText = `${product.rating} Stars (${product.reviews} Collector Reviews)`;
+
+            // Stars
+            let starsHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= Math.floor(product.rating)) {
+                    starsHtml += '<i class="fa-solid fa-star text-yellow-400"></i>';
+                } else if (i === Math.ceil(product.rating) && !Number.isInteger(product.rating)) {
+                    starsHtml += '<i class="fa-solid fa-star-half-stroke text-yellow-400"></i>';
+                } else {
+                    starsHtml += '<i class="fa-regular fa-star text-yellow-400"></i>';
+                }
+            }
+            document.getElementById('modal-stars').innerHTML = starsHtml;
+
+            // Setup Add button
+            document.getElementById('modal-add-btn').onclick = function() {
+                addToCart(product.id);
+                closeProductModal();
+            };
+
+            document.getElementById('product-modal').classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            const existing = cart.find(item => item.id === productId);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+
+            updateCartUI();
+            showToast(`Added ${product.name} to cart!`);
+        }
+
+        function changeQuantity(productId, delta) {
+            const idx = cart.findIndex(item => item.id === productId);
+            if (idx > -1) {
+                cart[idx].quantity += delta;
+                if (cart[idx].quantity <= 0) {
+                    cart.splice(idx, 1);
+                }
+                updateCartUI();
+            }
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartUI();
+            showToast("Item removed from cart");
+        }
+
+        function updateCartUI() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartCountBadge = document.getElementById('cart-count');
+            const subtotalEl = document.getElementById('cart-subtotal');
+            const savingsEl = document.getElementById('cart-savings');
+            const finalTotalEl = document.getElementById('cart-final-total');
+
+            const totalItems = cart.reduce((sum, i) => sum + i.quantity, 0);
+            cartCountBadge.innerText = totalItems;
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-64 text-gray-500 text-center">
+                        <i class="fa-solid fa-box-open text-5xl mb-3 text-gray-600"></i>
+                        <p class="text-base font-bold text-gray-300">Your cart is currently empty.</p>
+                        <p class="text-xs text-gray-500 mt-1">Add figures to your shrine collection.</p>
+                    </div>
+                `;
+                subtotalEl.innerText = '$0.00';
+                savingsEl.innerText = '-$0.00';
+                finalTotalEl.innerText = '$0.00';
+                updateShippingBar(0);
+                return;
+            }
+
+            let subtotal = 0;
+            let totalSavings = 0;
+            let itemsHtml = '';
+
+            cart.forEach(item => {
+                const itemSubtotal = item.price * item.quantity;
+                const itemSavings = (item.oldPrice - item.price) * item.quantity;
+                subtotal += itemSubtotal;
+                totalSavings += itemSavings;
+
+                itemsHtml += `
+                    <div class="flex items-center space-x-4 bg-darker p-3 rounded-2xl border border-cardBorder">
+                        <img src="${item.image}" onerror="this.onerror=null; this.src='${item.fallbackImage}';" class="w-16 h-20 object-contain bg-card rounded-xl p-1">
+                        <div class="flex-grow">
+                            <h4 class="text-xs font-bold text-white leading-tight mb-1 line-clamp-1">${item.name}</h4>
+                            <div class="text-primary font-bold text-sm mb-2">$${item.price.toFixed(2)}</div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center bg-card rounded-lg border border-cardBorder">
+                                    <button onclick="changeQuantity(${item.id}, -1)" class="w-7 h-6 text-xs text-gray-400 hover:text-white flex items-center justify-center">-</button>
+                                    <span class="w-7 text-center text-xs font-bold text-white">${item.quantity}</span>
+                                    <button onclick="changeQuantity(${item.id}, 1)" class="w-7 h-6 text-xs text-gray-400 hover:text-white flex items-center justify-center">+</button>
+                                </div>
+                                <button onclick="removeFromCart(${item.id})" class="text-gray-500 hover:text-red-400 text-xs">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            cartItemsContainer.innerHTML = itemsHtml;
+            subtotalEl.innerText = `$${subtotal.toFixed(2)}`;
+            savingsEl.innerText = `-$${totalSavings.toFixed(2)}`;
+            finalTotalEl.innerText = `$${subtotal.toFixed(2)}`;
+
+            updateShippingBar(subtotal);
+        }
+
+        function updateShippingBar(subtotal) {
+            const goal = 150.00;
+            const bar = document.getElementById('shipping-bar');
+            const percentEl = document.getElementById('shipping-percent');
+            const msgEl = document.getElementById('shipping-msg');
+
+            if (subtotal >= goal) {
+                bar.style.width = '100%';
+                percentEl.innerText = '100%';
+                msgEl.innerText = '🎉 Unlocked FREE Express Shipping!';
+            } else {
+                const percent = Math.min(100, Math.round((subtotal / goal) * 100));
+                const remaining = (goal - subtotal).toFixed(2);
+                bar.style.width = `${percent}%`;
+                percentEl.innerText = `${percent}%`;
+                msgEl.innerText = `Add $${remaining} more for Free Express Shipping`;
+            }
+        }
+
+        function toggleCart() {
+            const sidebar = document.getElementById('cart-sidebar');
+            const overlay = document.getElementById('cart-overlay');
+            sidebar.classList.toggle('open');
+            
+            if (sidebar.classList.contains('open')) {
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function openCheckoutModal() {
+            if (cart.length === 0) {
+                showToast("Your cart is empty!");
+                return;
+            }
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            document.getElementById('checkout-total-paid').innerText = `$${total.toFixed(2)}`;
+            
+            // Close Cart sidebar & open checkout confirmation
+            toggleCart();
+            document.getElementById('checkout-modal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            cart = [];
+            updateCartUI();
+            document.getElementById('checkout-modal').classList.add('hidden');
+            showToast("Order completed successfully!");
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize application on load
+        window.onload = function() {
+            initFlowerAnimation();
+            renderProducts();
+            updateCartUI();
+        };
+    </script>
+</body>
+</html>
